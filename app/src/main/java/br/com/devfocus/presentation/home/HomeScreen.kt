@@ -11,9 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import br.com.devfocus.data.local.entity.QuoteEntity
 import br.com.devfocus.data.local.entity.StudyStatus
 import br.com.devfocus.domain.model.StudyDay
+import br.com.devfocus.presentation.components.RemoveFavoriteDialog
 import br.com.devfocus.ui.theme.*
 import java.time.LocalDate
 
@@ -39,11 +38,18 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    var showRemoveDialog by remember { mutableStateOf(false) }
 
     HomeScreenContent(
         uiState = uiState,
         onStudyClicked = viewModel::onStudyTodayClicked,
-        onFavoriteClicked = viewModel::onFavoriteClicked,
+        onFavoriteClicked = { id, isFavorite ->
+            if (isFavorite) {
+                showRemoveDialog = true
+            } else {
+                viewModel.onFavoriteClicked(id, isFavorite)
+            }
+        },
         onUseFreezeClicked = viewModel::onUseFreezeClicked,
         onShareClicked = { text ->
             val sendIntent: Intent = Intent().apply {
@@ -55,6 +61,16 @@ fun HomeScreen(
             context.startActivity(shareIntent)
         }
     )
+
+    if (showRemoveDialog) {
+        RemoveFavoriteDialog(
+            onConfirm = {
+                uiState.quote?.let { viewModel.onFavoriteClicked(it.id, it.isFavorite) }
+                showRemoveDialog = false
+            },
+            onDismiss = { showRemoveDialog = false }
+        )
+    }
 }
 
 @Composable
@@ -183,18 +199,22 @@ fun QuoteCard(
         Column(
             modifier = Modifier.padding(24.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.FormatQuote,
-                contentDescription = null,
-                tint = Primary,
-                modifier = Modifier.size(32.dp)
-            )
-            
-            Text(
-                text = "Frase do dia",
-                style = MaterialTheme.typography.labelMedium,
-                color = TextSecondary
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.FormatQuote,
+                    contentDescription = null,
+                    tint = Primary,
+                    modifier = Modifier.size(32.dp)
+                )
+                
+                Spacer(modifier = Modifier.width(8.dp))
+                
+                Text(
+                    text = "Frase do dia",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = TextSecondary
+                )
+            }
             
             Spacer(modifier = Modifier.height(16.dp))
             

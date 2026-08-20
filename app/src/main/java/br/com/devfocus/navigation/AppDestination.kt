@@ -13,9 +13,8 @@ sealed class AppDestination(
 ) {
     object Home : AppDestination("home", "Início", Icons.Default.Home)
     object Favorites : AppDestination("favorites", "Favoritos", Icons.Default.Favorite)
-    object History : AppDestination("history", "Histórico", Icons.AutoMirrored.Filled.List)
 
     companion object {
-        val bottomNavItems = listOf(Home, Favorites, History)
+        val bottomNavItems = listOf(Home, Favorites)
     }
 }
