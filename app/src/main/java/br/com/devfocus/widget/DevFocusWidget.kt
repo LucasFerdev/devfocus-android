@@ -14,6 +14,7 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.*
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
@@ -50,16 +51,16 @@ class DevFocusWidget : GlanceAppWidget() {
         quoteText: String,
         streak: Int
     ) {
-        // Fundo escuro com leve tom de roxo e transparência (~90% opaco)
-        val widgetBackground = Color(0xE60A0B14) 
+        // Fundo premium: grafite muito escuro com leve toque de roxo e transparência
+        val widgetBackground = Color(0xF20D0E19) 
         val streakLabel = if (streak == 1) "dia" else "dias"
         
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .background(ColorProvider(widgetBackground))
-                .cornerRadius(28.dp)
-                .padding(horizontal = 24.dp, vertical = 20.dp),
+                .cornerRadius(32.dp)
+                .padding(horizontal = 24.dp, vertical = 16.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -67,7 +68,7 @@ class DevFocusWidget : GlanceAppWidget() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Streak no topo centralizado
+                // Streak centralizado no topo com hierarquia de cores
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -75,39 +76,42 @@ class DevFocusWidget : GlanceAppWidget() {
                     Image(
                         provider = ImageProvider(R.drawable.ic_streak_fire),
                         contentDescription = null,
-                        modifier = GlanceModifier.size(20.dp)
+                        modifier = GlanceModifier.size(24.dp)
                     )
-                    Spacer(modifier = GlanceModifier.width(6.dp))
+                    Spacer(modifier = GlanceModifier.width(8.dp))
                     Text(
                         text = "$streak",
                         style = TextStyle(
                             color = ColorProvider(Primary),
-                            fontSize = 20.sp,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
                     )
-                    Spacer(modifier = GlanceModifier.width(4.dp))
+                    Spacer(modifier = GlanceModifier.width(6.dp))
                     Text(
                         text = streakLabel,
                         style = TextStyle(
-                            color = ColorProvider(Color.White.copy(alpha = 0.5f)),
+                            color = ColorProvider(Color.White.copy(alpha = 0.6f)),
                             fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center
                         )
                     )
                 }
                 
-                Spacer(modifier = GlanceModifier.height(16.dp))
+                Spacer(modifier = GlanceModifier.height(12.dp))
 
-                // Frase centralizada como elemento principal
+                // Frase grande e centralizada como elemento principal
                 Text(
                     text = quoteText,
                     style = TextStyle(
                         color = ColorProvider(Color.White),
-                        fontSize = 18.sp,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center
                     ),
-                    maxLines = 4
+                    maxLines = 3
                 )
             }
         }
