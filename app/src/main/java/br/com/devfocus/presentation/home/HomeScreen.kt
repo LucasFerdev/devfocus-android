@@ -140,40 +140,22 @@ fun HomeTopBar() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 24.dp, bottom = 16.dp, start = 20.dp, end = 20.dp),
+            .padding(top = 32.dp, bottom = 16.dp, start = 20.dp, end = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = "Menu",
-                tint = Color.White
-            )
-            
-            Text(
-                text = buildAnnotatedString {
-                    append("Dev")
-                    withStyle(style = SpanStyle(color = Primary)) {
-                        append("Focus")
-                    }
-                },
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-1).sp
-                ),
-                color = Color.White
-            )
-            
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = null,
-                tint = Color.White.copy(alpha = 0.7f)
-            )
-        }
+        Text(
+            text = buildAnnotatedString {
+                append("Dev")
+                withStyle(style = SpanStyle(color = Primary)) {
+                    append("Focus")
+                }
+            },
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.Bold,
+                letterSpacing = (-1).sp
+            ),
+            color = Color.White
+        )
         
         Spacer(modifier = Modifier.height(4.dp))
         
@@ -240,7 +222,7 @@ fun QuoteCard(
                     Icon(
                         imageVector = if (quote?.isFavorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Favoritar",
-                        tint = if (quote?.isFavorite == true) Primary else TextSecondary
+                        tint = Primary
                     )
                 }
                 
@@ -276,11 +258,20 @@ fun StreakCard(currentStreak: Int, bestStreak: Int) {
                     color = TextSecondary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "$currentStreak dias",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color.White
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.LocalFireDepartment,
+                        contentDescription = null,
+                        tint = Primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "$currentStreak dias",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                }
             }
         }
 
@@ -296,11 +287,20 @@ fun StreakCard(currentStreak: Int, bestStreak: Int) {
                     color = TextSecondary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "$bestStreak 🏆",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = Color.White
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.EmojiEvents,
+                        contentDescription = null,
+                        tint = Primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "$bestStreak",
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                }
             }
         }
     }
