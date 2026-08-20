@@ -28,7 +28,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
-            val homeViewModel: HomeViewModel = viewModel(factory = ViewModelFactory(this))
+            val factory = ViewModelFactory(this)
+            val homeViewModel: HomeViewModel = viewModel(factory = factory)
+            val favoritesViewModel: br.com.devfocus.presentation.favorites.FavoritesViewModel = viewModel(factory = factory)
 
             DevFocusTheme {
                 Scaffold(
@@ -70,6 +72,7 @@ class MainActivity : ComponentActivity() {
                     DevFocusNavHost(
                         navController = navController,
                         homeViewModel = homeViewModel,
+                        favoritesViewModel = favoritesViewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

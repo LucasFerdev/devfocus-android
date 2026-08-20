@@ -7,6 +7,7 @@ import br.com.devfocus.data.local.database.DevFocusDatabase
 import br.com.devfocus.data.local.preferences.DevFocusPreferences
 import br.com.devfocus.data.repository.QuoteRepositoryImpl
 import br.com.devfocus.data.repository.StudyRepositoryImpl
+import br.com.devfocus.presentation.favorites.FavoritesViewModel
 import br.com.devfocus.presentation.home.HomeViewModel
 
 class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
@@ -21,6 +22,9 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
         return when {
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
                 HomeViewModel(quoteRepository, studyRepository) as T
+            }
+            modelClass.isAssignableFrom(FavoritesViewModel::class.java) -> {
+                FavoritesViewModel(quoteRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
