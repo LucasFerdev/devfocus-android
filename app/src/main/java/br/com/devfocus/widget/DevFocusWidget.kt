@@ -15,7 +15,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import br.com.devfocus.ui.theme.Background
 import br.com.devfocus.ui.theme.Primary
 
 class DevFocusWidget : GlanceAppWidget() {
@@ -28,10 +27,13 @@ class DevFocusWidget : GlanceAppWidget() {
 
     @Composable
     private fun DevFocusWidgetContent() {
+        // Cor escura com leve tom de roxo e transparência (~90% opaco / 10% transparente)
+        val widgetBackground = Color(0xE60A0B14) 
+        
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(Background))
+                .background(ColorProvider(widgetBackground))
                 .padding(16.dp),
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.Start
@@ -41,15 +43,27 @@ class DevFocusWidget : GlanceAppWidget() {
                 horizontalAlignment = Alignment.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "DevFocus",
-                    style = TextStyle(
-                        color = ColorProvider(Primary),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                Row {
+                    Text(
+                        text = "Dev",
+                        style = TextStyle(
+                            color = ColorProvider(Color.White),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                )
+                    Text(
+                        text = "Focus",
+                        style = TextStyle(
+                            color = ColorProvider(Primary),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+                
                 Spacer(modifier = GlanceModifier.defaultWeight())
+                
                 Text(
                     text = "🔥 12 dias",
                     style = TextStyle(
@@ -65,7 +79,7 @@ class DevFocusWidget : GlanceAppWidget() {
                 text = "“",
                 style = TextStyle(
                     color = ColorProvider(Primary),
-                    fontSize = 24.sp,
+                    fontSize = 48.sp, // Aumentado conforme solicitado
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -82,8 +96,21 @@ class DevFocusWidget : GlanceAppWidget() {
             
             Spacer(modifier = GlanceModifier.defaultWeight())
             
-            Row(modifier = GlanceModifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
-                Text("♥", style = TextStyle(color = ColorProvider(Primary), fontSize = 20.sp))
+            Row(
+                modifier = GlanceModifier.fillMaxWidth(), 
+                horizontalAlignment = Alignment.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "♥", 
+                    style = TextStyle(color = ColorProvider(Primary), fontSize = 20.sp)
+                )
+                Spacer(modifier = GlanceModifier.width(16.dp))
+                // Representação visual do botão de compartilhar
+                Text(
+                    text = "↗", 
+                    style = TextStyle(color = ColorProvider(Color.White.copy(alpha = 0.7f)), fontSize = 20.sp)
+                )
             }
         }
     }
