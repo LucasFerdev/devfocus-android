@@ -1,13 +1,16 @@
 package br.com.devfocus.widget
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.*
@@ -15,26 +18,54 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import br.com.devfocus.MainActivity
+import br.com.devfocus.data.local.database.DevFocusDatabase
+import br.com.devfocus.data.local.preferences.DevFocusPreferences
+import br.com.devfocus.domain.logic.StreakCalculator
 import br.com.devfocus.ui.theme.Primary
+import kotlinx.coroutines.flow.first
+import java.time.LocalDate
 
 class DevFocusWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        val database = DevFocusDatabase.getDatabase(context)
+        val preferences = DevFocusPreferences(context)
+        
+        val quoteId = preferences.dailyQuoteId.first()
+        val quote = quoteId?.let { database.quoteDao().getQuoteById(it) }
+        val history = database.studyDao().getAllStudyHistory().first()
+        val currentStreak = StreakCalculator.calculateCurrentStreak(history, LocalDate.now())
+
         provideContent {
-            DevFocusWidgetContent()
+            DevFocusWidgetContent(
+                context = context,
+                quoteText = quote?.text ?: "Seu foco constrói seu futuro",
+                isFavorite = quote?.isFavorite ?: false,
+                streak = currentStreak
+            )
         }
     }
 
     @Composable
-    private fun DevFocusWidgetContent() {
+    private fun DevFocusWidgetContent(
+        context: Context,
+        quoteText: String,
+        isFavorite: Boolean,
+        streak: Int
+    ) {
         // Cor escura com leve tom de roxo e transparência (~90% opaco / 10% transparente)
         val widgetBackground = Color(0xE60A0B14) 
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
         
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .background(ColorProvider(widgetBackground))
-                .padding(16.dp),
+                .padding(16.dp)
+                .clickable(actionStartActivity(intent)),
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.Start
         ) {
@@ -64,28 +95,26 @@ class DevFocusWidget : GlanceAppWidget() {
                 
                 Spacer(modifier = GlanceModifier.defaultWeight())
                 
-                Text(
-                    text = "🔥 12 dias",
-                    style = TextStyle(
-                        color = ColorProvider(Color.White),
-                        fontSize = 14.sp
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "🔥", 
+                        style = TextStyle(color = ColorProvider(Primary), fontSize = 14.sp)
                     )
-                )
+                    Spacer(modifier = GlanceModifier.width(4.dp))
+                    Text(
+                        text = "$streak dias",
+                        style = TextStyle(
+                            color = ColorProvider(Color.White),
+                            fontSize = 14.sp
+                        )
+                    )
+                }
             }
 
-            Spacer(modifier = GlanceModifier.height(12.dp))
+            Spacer(modifier = GlanceModifier.height(16.dp))
 
             Text(
-                text = "“",
-                style = TextStyle(
-                    color = ColorProvider(Primary),
-                    fontSize = 48.sp, // Aumentado conforme solicitado
-                    fontWeight = FontWeight.Bold
-                )
-            )
-
-            Text(
-                text = "O código que você escreve hoje é o futuro que você constrói amanhã.",
+                text = quoteText,
                 style = TextStyle(
                     color = ColorProvider(Color.White),
                     fontSize = 16.sp,
@@ -98,18 +127,13 @@ class DevFocusWidget : GlanceAppWidget() {
             
             Row(
                 modifier = GlanceModifier.fillMaxWidth(), 
-                horizontalAlignment = Alignment.End,
+                horizontalAlignment = Alignment.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "♥", 
-                    style = TextStyle(color = ColorProvider(Primary), fontSize = 20.sp)
-                )
-                Spacer(modifier = GlanceModifier.width(16.dp))
-                // Representação visual do botão de compartilhar
-                Text(
-                    text = "↗", 
-                    style = TextStyle(color = ColorProvider(Color.White.copy(alpha = 0.7f)), fontSize = 20.sp)
+                    text = if (isFavorite) "♥" else "♡", 
+                    style = TextStyle(color = ColorProvider(Primary), fontSize = 24.sp),
+                    modifier = GlanceModifier.clickable(actionStartActivity(intent))
                 )
             }
         }

@@ -6,12 +6,15 @@ import br.com.devfocus.data.local.entity.StudyStatus
 import br.com.devfocus.data.local.preferences.DevFocusPreferences
 import br.com.devfocus.domain.logic.StreakCalculator
 import br.com.devfocus.domain.repository.StudyRepository
+import br.com.devfocus.widget.WidgetUpdater
+import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 
 class StudyRepositoryImpl(
+    private val context: Context,
     private val studyDao: StudyDao,
     private val preferences: DevFocusPreferences
 ) : StudyRepository {
@@ -34,6 +37,7 @@ class StudyRepositoryImpl(
             if (currentStreak > best) {
                 preferences.saveBestStreak(currentStreak)
             }
+            WidgetUpdater.update(context)
         }
     }
 

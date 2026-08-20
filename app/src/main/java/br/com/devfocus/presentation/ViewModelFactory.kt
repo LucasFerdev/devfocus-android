@@ -14,8 +14,8 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
     private val database = DevFocusDatabase.getDatabase(context)
     private val preferences = DevFocusPreferences(context)
     
-    private val quoteRepository = QuoteRepositoryImpl(database.quoteDao(), preferences)
-    private val studyRepository = StudyRepositoryImpl(database.studyDao(), preferences)
+    private val quoteRepository = QuoteRepositoryImpl(context, database.quoteDao(), preferences)
+    private val studyRepository = StudyRepositoryImpl(context, database.studyDao(), preferences)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

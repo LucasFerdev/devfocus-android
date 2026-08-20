@@ -4,6 +4,8 @@ import br.com.devfocus.data.local.dao.QuoteDao
 import br.com.devfocus.data.local.entity.QuoteEntity
 import br.com.devfocus.data.local.preferences.DevFocusPreferences
 import br.com.devfocus.domain.repository.QuoteRepository
+import br.com.devfocus.widget.WidgetUpdater
+import android.content.Context
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -13,6 +15,7 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class QuoteRepositoryImpl(
+    private val context: Context,
     private val quoteDao: QuoteDao,
     private val preferences: DevFocusPreferences
 ) : QuoteRepository {
@@ -34,6 +37,7 @@ class QuoteRepositoryImpl(
 
     override suspend fun toggleFavorite(id: Long, isFavorite: Boolean) {
         quoteDao.updateFavoriteStatus(id, isFavorite)
+        WidgetUpdater.update(context)
     }
 
     override suspend fun refreshDailyQuote() {
@@ -49,6 +53,7 @@ class QuoteRepositoryImpl(
                 if (allQuotes.isNotEmpty()) {
                     val randomQuote = allQuotes.random()
                     preferences.saveDailyQuote(randomQuote.id, today)
+                    WidgetUpdater.update(context)
                 }
             }
         }
