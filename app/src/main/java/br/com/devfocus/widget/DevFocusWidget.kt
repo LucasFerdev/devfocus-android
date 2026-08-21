@@ -1,15 +1,16 @@
 package br.com.devfocus.widget
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
-import androidx.glance.Image
-import androidx.glance.ImageProvider
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -19,7 +20,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import br.com.devfocus.R
+import br.com.devfocus.MainActivity
 import br.com.devfocus.data.local.database.DevFocusDatabase
 import br.com.devfocus.data.local.preferences.DevFocusPreferences
 import br.com.devfocus.domain.logic.StreakCalculator
@@ -40,6 +41,7 @@ class DevFocusWidget : GlanceAppWidget() {
 
         provideContent {
             DevFocusWidgetContent(
+                context = context,
                 quoteText = quote?.text ?: "Seu foco constrói seu futuro",
                 streak = currentStreak
             )
@@ -48,19 +50,24 @@ class DevFocusWidget : GlanceAppWidget() {
 
     @Composable
     private fun DevFocusWidgetContent(
+        context: Context,
         quoteText: String,
         streak: Int
     ) {
         // Fundo premium: grafite muito escuro com leve toque de roxo e transparência
         val widgetBackground = Color(0xF20D0E19) 
         val streakLabel = if (streak == 1) "dia" else "dias"
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
         
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .background(ColorProvider(widgetBackground))
                 .cornerRadius(32.dp)
-                .padding(horizontal = 24.dp, vertical = 16.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .clickable(actionStartActivity(intent)),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -73,12 +80,6 @@ class DevFocusWidget : GlanceAppWidget() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
-                        provider = ImageProvider(R.drawable.ic_streak_fire),
-                        contentDescription = null,
-                        modifier = GlanceModifier.size(24.dp)
-                    )
-                    Spacer(modifier = GlanceModifier.width(8.dp))
                     Text(
                         text = "$streak",
                         style = TextStyle(
