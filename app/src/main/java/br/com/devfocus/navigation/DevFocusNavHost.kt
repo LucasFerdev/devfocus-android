@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import br.com.devfocus.presentation.favorites.FavoritesScreen
 import br.com.devfocus.presentation.favorites.FavoritesViewModel
 import br.com.devfocus.presentation.home.HomeScreen
@@ -23,7 +24,18 @@ fun DevFocusNavHost(
         modifier = modifier
     ) {
         composable(AppDestination.Home.route) {
-            HomeScreen(viewModel = homeViewModel)
+            HomeScreen(
+                viewModel = homeViewModel,
+                onSeeAllClicked = {
+                    navController.navigate(AppDestination.Favorites.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
         }
         composable(AppDestination.Favorites.route) {
             FavoritesScreen(viewModel = favoritesViewModel)

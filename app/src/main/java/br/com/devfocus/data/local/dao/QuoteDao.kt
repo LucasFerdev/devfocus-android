@@ -16,6 +16,9 @@ interface QuoteDao {
     fun getFavoriteQuotes(): Flow<List<QuoteEntity>>
 
     @Query("SELECT * FROM quotes WHERE id = :id")
+    fun getQuoteByIdFlow(id: Long): Flow<QuoteEntity?>
+
+    @Query("SELECT * FROM quotes WHERE id = :id")
     suspend fun getQuoteById(id: Long): QuoteEntity?
 
     @Query("UPDATE quotes SET isFavorite = :isFavorite WHERE id = :id")

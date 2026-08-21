@@ -34,7 +34,8 @@ import java.time.LocalDate
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    onSeeAllClicked: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -59,7 +60,8 @@ fun HomeScreen(
             }
             val shareIntent = Intent.createChooser(sendIntent, null)
             context.startActivity(shareIntent)
-        }
+        },
+        onSeeAllClicked = onSeeAllClicked
     )
 
     if (showRemoveDialog) {
@@ -79,7 +81,8 @@ fun HomeScreenContent(
     onStudyClicked: () -> Unit,
     onFavoriteClicked: (Long, Boolean) -> Unit,
     onUseFreezeClicked: () -> Unit,
-    onShareClicked: (String) -> Unit
+    onShareClicked: (String) -> Unit,
+    onSeeAllClicked: () -> Unit
 ) {
     Scaffold(
         containerColor = Background,
@@ -125,7 +128,7 @@ fun HomeScreenContent(
             }
             
             item {
-                FavoritesHeader()
+                FavoritesHeader(onSeeAllClicked = onSeeAllClicked)
             }
             
             items(uiState.favoriteQuotes) { quote ->
@@ -419,14 +422,16 @@ fun FreezeBanner(onUseFreezeClicked: () -> Unit) {
 }
 
 @Composable
-fun FavoritesHeader() {
+fun FavoritesHeader(onSeeAllClicked: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("Frases favoritas", color = Color.White, fontWeight = FontWeight.Bold)
-        Text("Ver todas", color = Primary, fontSize = 14.sp)
+        TextButton(onClick = onSeeAllClicked, contentPadding = PaddingValues(0.dp)) {
+            Text("Ver todas", color = Primary, fontSize = 14.sp)
+        }
     }
 }
 
@@ -475,7 +480,8 @@ fun HomePreview() {
             onStudyClicked = {},
             onFavoriteClicked = { _, _ -> },
             onUseFreezeClicked = {},
-            onShareClicked = {}
+            onShareClicked = {},
+            onSeeAllClicked = {}
         )
     }
 }

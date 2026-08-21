@@ -25,10 +25,7 @@ class QuoteRepositoryImpl(
             if (id == null) {
                 flowOf(null)
             } else {
-                // In a real app we'd want to observe this if it can change
-                // but since it's the daily quote, we can just fetch it once it's set
-                val quote = quoteDao.getQuoteById(id)
-                flowOf(quote)
+                quoteDao.getQuoteByIdFlow(id)
             }
         }
     }
